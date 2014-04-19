@@ -1,5 +1,6 @@
 require 'ruboto/widget'
 require 'ruboto/util/toast'
+require 'isbn_information_fetcher'
 
 ruboto_import_widgets :Button, :EditText, :LinearLayout, :TextView
 
@@ -25,11 +26,20 @@ class IsbnReporterActivity
     puts $!.backtrace.join("\n")
   end
 
+  def on_information_received(info)
+    run_on_uithread { toast info.inspect }
+  end
+
+  def on_error(error)
+    run_on_ui_thread { toast error.inspect }
+  end
+
   private
 
   def save_isbn
-    @text_view.text = 'Will save the info!'
-    toast 'Next step is to fetch the info and store it.'
+    isbn = @text_view.text.to_s
+    toast "Fetching info for #{isbn}"
+    IsbnInformationFetcher.fetch(self, isbn)
   end
 
 end
