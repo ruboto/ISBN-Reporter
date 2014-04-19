@@ -11,8 +11,14 @@ class IsbnReporterActivity
 
     self.content_view =
         linear_layout :orientation => :vertical do
-          text_view text: 'ISBN:'
-          @text_view = edit_text :text => '',
+          text_view text: 'ISBNdb API Key:', :text_size => 32.0
+          @api_key_view = edit_text :text => 'MyAccCode',
+              hint: 'Enter ISBNdb api key',
+              input_type: android.text.InputType::TYPE_CLASS_NUMBER,
+              :layout => {:width => :match_parent},
+              :gravity => :center, :text_size => 32.0
+          text_view text: 'ISBN:', :text_size => 32.0
+          @isbn_view = edit_text :text => '',
               hint: 'Enter ISBN number',
               input_type: android.text.InputType::TYPE_CLASS_NUMBER,
               :layout => {:width => :match_parent},
@@ -37,9 +43,10 @@ class IsbnReporterActivity
   private
 
   def save_isbn
-    isbn = @text_view.text.to_s
+    api_key = @api_key_view.text.to_s
+    isbn = @isbn_view.text.to_s
     toast "Fetching info for #{isbn}"
-    IsbnInformationFetcher.fetch(self, isbn)
+    IsbnInformationFetcher.fetch(self, api_key, isbn)
   end
 
 end
