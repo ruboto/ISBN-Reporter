@@ -9,21 +9,23 @@ class IsbnReporterActivity
     super
     set_title 'ISBN Information Reporter'
 
-    self.content_view =
-        linear_layout orientation: :vertical do
-          text_view text: 'ISBNdb API Key:', text_size: 32.0
-          @api_key_view = edit_text text: 'MyAccCode', text_size: 32.0,
-              hint: 'Enter ISBNdb api key',
-              input_type: android.text.InputType::TYPE_CLASS_NUMBER,
-              layout: {:width => :match_parent}, gravity: :center
-          text_view text: 'ISBN:', text_size: 32.0
-          @isbn_view = edit_text text_size: 32.0,
-              hint: 'Enter ISBN number',
-              input_type: android.text.InputType::TYPE_CLASS_NUMBER,
-              layout: {width: :match_parent}, gravity: :center
-          button text: 'Save', layout: {width: :match_parent},
-              id: 43, on_click_listener: proc { save_isbn }
-        end
+    self.content_view = linear_layout do
+      linear_layout orientation: :vertical, margins: [5, 5, 5, 5],
+          padding: [5, 5, 5, 5] do
+        text_view text: 'ISBNdb API Key:', text_size: 32.0
+        @api_key_view = edit_text text: 'MyAccCode', text_size: 32.0,
+            hint: 'Enter ISBNdb api key',
+            input_type: android.text.InputType::TYPE_CLASS_NUMBER,
+            layout: {:width => :match_parent}, gravity: :center
+        text_view text: 'ISBN:', text_size: 32.0
+        @isbn_view = edit_text text_size: 32.0,
+            hint: 'Enter ISBN number',
+            input_type: android.text.InputType::TYPE_CLASS_NUMBER,
+            layout: {width: :match_parent}, gravity: :center
+        button text: 'Save', layout: {width: :match_parent},
+            id: 43, on_click_listener: proc { save_isbn }
+      end
+    end
   rescue Exception
     puts "Exception creating activity: #{$!}"
     puts $!.backtrace.join("\n")
