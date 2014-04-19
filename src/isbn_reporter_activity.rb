@@ -7,25 +7,22 @@ ruboto_import_widgets :Button, :EditText, :LinearLayout, :TextView
 class IsbnReporterActivity
   def onCreate(bundle)
     super
-    set_title 'Domo arigato, Mr Ruboto!'
+    set_title 'ISBN Information Reporter'
 
     self.content_view =
-        linear_layout :orientation => :vertical do
-          text_view text: 'ISBNdb API Key:', :text_size => 32.0
-          @api_key_view = edit_text :text => 'MyAccCode',
+        linear_layout orientation: :vertical do
+          text_view text: 'ISBNdb API Key:', text_size: 32.0
+          @api_key_view = edit_text text: 'MyAccCode', text_size: 32.0,
               hint: 'Enter ISBNdb api key',
               input_type: android.text.InputType::TYPE_CLASS_NUMBER,
-              :layout => {:width => :match_parent},
-              :gravity => :center, :text_size => 32.0
-          text_view text: 'ISBN:', :text_size => 32.0
-          @isbn_view = edit_text :text => '',
+              layout: {:width => :match_parent}, gravity: :center
+          text_view text: 'ISBN:', text_size: 32.0
+          @isbn_view = edit_text text_size: 32.0,
               hint: 'Enter ISBN number',
               input_type: android.text.InputType::TYPE_CLASS_NUMBER,
-              :layout => {:width => :match_parent},
-              :gravity => :center, :text_size => 32.0
-          button :text => 'Save',
-              :layout => {:width => :match_parent},
-              :id => 43, :on_click_listener => proc { save_isbn }
+              layout: {width: :match_parent}, gravity: :center
+          button text: 'Save', layout: {width: :match_parent},
+              id: 43, on_click_listener: proc { save_isbn }
         end
   rescue Exception
     puts "Exception creating activity: #{$!}"
