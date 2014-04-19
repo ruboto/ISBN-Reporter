@@ -10,7 +10,14 @@ class IsbnInformationFetcher
 
     Thread.with_large_stack do
       begin
-        content = open("http://isbndb.com/api/v2/json/#{api_key}/book/#{isbn}").read
+        begin
+          content = open("http://isbndb.com/api/v2/json/#{api_key}/book/#{isbn}").read
+        rescue Exception
+          puts "Exception opening ISBN info URL: #{$!}"
+          puts $!.backtrace.join("\n")
+          activity.on_error $!.to_s
+          next
+        end
 
         obj = JSON.parse(content)
 
@@ -27,6 +34,8 @@ class IsbnInformationFetcher
           activity.on_error obj['error']
         end
       rescue Exception
+        puts "Exception fetching ISBN info: #{$!}"
+        puts $!.backtrace.join("\n")
         activity.on_error $!.to_s
       end
     end

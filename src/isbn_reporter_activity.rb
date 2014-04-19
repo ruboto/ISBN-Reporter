@@ -1,6 +1,7 @@
 require 'ruboto/widget'
 require 'ruboto/util/toast'
 require 'isbn_information_fetcher'
+require 'storage_proxy'
 
 ruboto_import_widgets :Button, :EditText, :LinearLayout, :TextView
 
@@ -21,8 +22,12 @@ class IsbnReporterActivity
         @isbn_view = edit_text hint: 'Enter ISBN number',
             input_type: android.text.InputType::TYPE_CLASS_NUMBER,
             layout: {width: :match_parent}, gravity: :center
-        button text: 'Save', layout: {width: :match_parent},
-            id: 43, on_click_listener: proc { save_isbn }
+        linear_layout do
+          button text: 'Save', layout: {width: :match_parent, weight: 1},
+              on_click_listener: proc { save_isbn }
+          button text: 'List', layout: {width: :match_parent, weight: 1},
+              on_click_listener: proc { start_ruboto_activity :ListActivity }
+        end
         @result_view = text_view
       end
     end
@@ -32,11 +37,12 @@ class IsbnReporterActivity
   end
 
   def on_information_received(info)
-    run_on_ui_thread { toast info.inspect ; @result_view.text = info.inspect }
+    run_on_ui_thread { toast info.inspect; @result_view.text = info.inspect }
+    StorageProxy.store(info)
   end
 
   def on_error(error)
-    run_on_ui_thread { toast error.inspect ; @result_view.text = error.inspect }
+    run_on_ui_thread { toast error.inspect; @result_view.text = error.inspect }
   end
 
   private
