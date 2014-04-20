@@ -16,7 +16,6 @@ class IsbnReporterActivity
         text_view text: 'ISBNdb API Key:'
         @api_key_view = edit_text text: 'MyAccCode',
             hint: 'Enter ISBNdb api key',
-            input_type: android.text.InputType::TYPE_CLASS_NUMBER,
             layout: {:width => :match_parent}, gravity: :center
         text_view text: 'ISBN:'
         @isbn_view = edit_text hint: 'Enter ISBN number',
