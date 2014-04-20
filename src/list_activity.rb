@@ -10,6 +10,7 @@ class ListActivity
     self.content_view = linear_layout do
       linear_layout orientation: :vertical, margins: [5, 5, 5, 5],
           padding: [5, 5, 5, 5], layout: {width: :match_parent} do
+        text_view text: 'Stored books', text_size: 36, gravity: :center
         @list_view = list_view list: []
       end
     end

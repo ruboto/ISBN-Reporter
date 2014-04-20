@@ -16,6 +16,7 @@ class IsbnReporterActivity
     self.content_view = linear_layout do
       linear_layout orientation: :vertical, margins: [5, 5, 5, 5],
           padding: [5, 5, 5, 5], layout: {width: :match_parent} do
+        text_view text: 'Store ISBN', text_size: 36, gravity: :center
         text_view text: 'ISBN:'
         @isbn_view = edit_text hint: 'Enter ISBN number',
             input_type: InputType::TYPE_CLASS_PHONE,
@@ -37,6 +38,7 @@ class IsbnReporterActivity
   def onResume
     super
     if Settings.api_key.nil?
+      toast 'API key is required'
       start_ruboto_activity :SettingsActivity
     end
   end
