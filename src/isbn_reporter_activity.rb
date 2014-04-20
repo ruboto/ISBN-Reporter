@@ -5,7 +5,11 @@ require 'storage_proxy'
 
 ruboto_import_widgets :Button, :EditText, :LinearLayout, :TextView
 
+import android.text.InputType
+
 class IsbnReporterActivity
+  API_KEY_FILE = 'api_key'
+
   def onCreate(bundle)
     super
     set_title 'ISBN Information Reporter'
@@ -14,12 +18,11 @@ class IsbnReporterActivity
       linear_layout orientation: :vertical, margins: [5, 5, 5, 5],
           padding: [5, 5, 5, 5], layout: {width: :match_parent} do
         text_view text: 'ISBNdb API Key:'
-        @api_key_view = edit_text text: 'MyAccCode',
-            hint: 'Enter ISBNdb api key',
+        @api_key_view = edit_text hint: 'Enter ISBNdb api key',
             layout: {:width => :match_parent}, gravity: :center
         text_view text: 'ISBN:'
         @isbn_view = edit_text hint: 'Enter ISBN number',
-            input_type: android.text.InputType::TYPE_CLASS_NUMBER,
+            input_type: InputType::TYPE_CLASS_PHONE,
             layout: {width: :match_parent}, gravity: :center
         linear_layout do
           button text: 'Save', layout: {width: :match_parent, weight: 1},
@@ -35,7 +38,20 @@ class IsbnReporterActivity
     puts $!.backtrace.join("\n")
   end
 
-  def on_information_received(info)
+  def onResume
+    super
+    if File.exists?(API_KEY_FILE)
+      api_key = File.read(API_KEY_FILE)
+      run_on_ui_thread do
+        @api_key_view.text = api_key
+        @isbn_view.request_focus
+      end
+    else
+      run_on_ui_thread { @api_key_view.request_focus }
+    end
+  end
+
+  def on_info_received(info)
     run_on_ui_thread { toast info.inspect; @result_view.text = info.inspect }
     StorageProxy.store(info)
   end
@@ -48,6 +64,7 @@ class IsbnReporterActivity
 
   def save_isbn
     api_key = @api_key_view.text.to_s
+    File.write(API_KEY_FILE, api_key)
     isbn = @isbn_view.text.to_s
     toast "Fetching info for #{isbn}"
     IsbnInformationFetcher.fetch(self, api_key, isbn)

@@ -6,7 +6,7 @@
 class StdlibDependencies
   attr_reader :dependencies, :version
 
-  REQUIRE = %r{^\s*require[ (]['"]([a-zA-Z0-9/-_]+)["'][)]?\s*$}
+  REQUIRE = %r{^\s*require[ (]['"]([a-zA-Z0-9/_-]+)["'][)]?\s*$}
   REQUIRE_RELATIVE = %r{^\s*require_relative[ (]['"]([a-zA-Z0-9/-_]+)["'][)]?\s*$}
 
   def self.[](key)
@@ -17,20 +17,20 @@ class StdlibDependencies
     @@versions ||= {}
   end
 
-  def self.collect(dir=".")
-    local = new("app")
-    Dir.chdir(dir) do 
-      local.check_dir(["ruboto"])
+  def self.collect(dir='.')
+    local = new('app')
+    Dir.chdir(dir) do
+      local.check_dir(['ruboto'])
     end
     local
   end
 
-  def self.generate(dir=".")
+  def self.generate(dir='.')
     versions
 
     Dir.chdir(dir) do
-      raise("Can't find shared directory") unless File.directory?("shared") 
-      Dir["*"].select{|d| File.directory?(d) && d != "shared"}.each do |d|
+      raise("Can't find shared directory") unless File.directory?('shared')
+      Dir['*'].select { |d| File.directory?(d) && d != 'shared' }.each do |d|
         @@versions[d] = new(d).generate
       end
     end
@@ -42,10 +42,10 @@ class StdlibDependencies
     require 'yaml'
 
     all_dependencies = {}
-    versions.each{|k, v| all_dependencies[k] = v.dependencies}
+    versions.each { |k, v| all_dependencies[k] = v.dependencies }
 
-    File.open( file, 'w' ) do |out|
-      YAML.dump( all_dependencies, out )
+    File.open(file, 'w') do |out|
+      YAML.dump(all_dependencies, out)
     end
 
     versions
@@ -55,10 +55,10 @@ class StdlibDependencies
     require 'yaml'
 
     @@versions = {}
-    raise("Can't find #{file}") unless File.exists?(file) 
+    raise("Can't find #{file}") unless File.exists?(file)
 
-    File.open(file) do |versions|
-      YAML.load(versions).each{|k,v| @@versions[k] = new(k, v)}
+    File.open(file) do |f|
+      YAML.load(f).each { |k, v| @@versions[k] = new(k, v) }
     end
 
     versions
@@ -74,11 +74,11 @@ class StdlibDependencies
   end
 
   def generate
-    raise("Can't find shared directory") unless File.directory?("shared") 
-    raise("Can't find #{@version} directory") unless File.directory?(@version) 
+    raise("Can't find shared directory") unless File.directory?('shared')
+    raise("Can't find #{@version} directory") unless File.directory?(@version)
 
-    Dir.chdir("shared"){check_dir}
-    Dir.chdir(@version){check_dir}
+    Dir.chdir('shared') { check_dir }
+    Dir.chdir(@version) { check_dir }
 
     # Clean up dependencies
     @dependencies.keys.sort.each do |i|
@@ -118,17 +118,19 @@ class StdlibDependencies
     #################################
 
     f.scan(REQUIRE) do |j|
+      puts "Found #{j}"
       depends_on(file, j[0])
     end
 
     f.scan(REQUIRE_RELATIVE) do |j|
+      puts "Found #{j}"
       on = file.split('/')[0..-2] << j[0]
       depends_on(file, on.join('/'))
     end
   end
 
   def check_dir(exclude=[])
-    Dir["**/*.rb"].select{|rb| not exclude.include?(rb.split('/')[0])}.each do |i|
+    Dir['**/*.rb'].select { |rb| not exclude.include?(rb.split('/')[0]) }.each do |i|
       gather_dependencies(i)
     end
   end
