@@ -63,7 +63,7 @@ class IsbnReporterActivity
   private
 
   def save_isbn
-    api_key = @api_key_view.text.to_s
+    api_key = @api_key_view.text.to_s.upcase
     File.write(API_KEY_FILE, api_key)
     isbn = @isbn_view.text.to_s
     toast "Fetching info for #{isbn}"
