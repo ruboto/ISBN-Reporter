@@ -17,7 +17,7 @@
 #    If you include the jruby jars, this is used to
 #      trim away unused versions of the stdlib.
 #
-#ruby_version: 1.9
+ruby_version: 1.9
 
 ###################################
 #
@@ -31,7 +31,7 @@
 #    "rake libs:check_dependencies' will build
 #    auto_dependencies.yml.
 #
-# included_stdlibs: auto
+included_stdlibs: auto
 #
 # included_stdlibs:
 # - fileutils
