@@ -36,8 +36,7 @@ class SettingsActivity
 
   def save_settings
     Settings.api_key = @api_key_view.text.to_s.upcase
-    path_value = @path_view.text.to_s
-    Settings.path = path_value.empty? ? nil : path_value
+    Settings.path = @path_view.text.to_s
     toast 'Settings saved'
     finish
   end

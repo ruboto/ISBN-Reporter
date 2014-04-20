@@ -8,6 +8,7 @@ class Settings
   end
 
   def self.api_key=(value)
+    value = nil if value.strip.empty?
     save load.update(API_KEY => value)
   end
 
@@ -16,6 +17,7 @@ class Settings
   end
 
   def self.path=(value)
+    value = nil if value.strip.empty?
     save load.update(PATH_KEY => value)
   end
 
