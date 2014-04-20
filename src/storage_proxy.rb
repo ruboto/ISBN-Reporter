@@ -1,15 +1,14 @@
 require 'json'
 
 class StorageProxy
-  FILE_NAME = 'items.json'
-
-  def self.store(info)
-    File.write(FILE_NAME, JSON.dump(load + [info]))
+  def self.store(path, info)
+    puts "Storing: #{path.inspect}: #{JSON.dump(load(path) + [info])}"
+    File.write(path, JSON.dump(load(path) + [info]))
   end
 
-  def self.load
-    if File.exists? FILE_NAME
-      JSON.parse File.read(FILE_NAME)
+  def self.load(path)
+    if File.exists? path
+      JSON.parse File.read(path)
     else
       []
     end

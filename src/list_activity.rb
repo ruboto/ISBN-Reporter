@@ -22,7 +22,7 @@ class ListActivity
     super
     Thread.start do
       begin
-        items = StorageProxy.load
+        items = StorageProxy.load(Settings.path)
         run_on_ui_thread do
           begin
             @list_view.adapter.add_all items
@@ -36,15 +36,6 @@ class ListActivity
         puts $!.backtrace.join("\n")
       end
     end
-  end
-
-  private
-
-  def save_isbn
-    api_key = @api_key_view.text.to_s
-    isbn = @isbn_view.text.to_s
-    toast "Fetching info for #{isbn}"
-    IsbnInformationFetcher.fetch(self, api_key, isbn)
   end
 
 end

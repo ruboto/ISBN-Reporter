@@ -1,6 +1,7 @@
 require 'ruboto/widget'
 require 'ruboto/util/toast'
 require 'isbn_information_fetcher'
+require 'settings'
 require 'storage_proxy'
 
 ruboto_import_widgets :Button, :EditText, :LinearLayout, :TextView
@@ -8,8 +9,6 @@ ruboto_import_widgets :Button, :EditText, :LinearLayout, :TextView
 import android.text.InputType
 
 class IsbnReporterActivity
-  API_KEY_FILE = 'api_key'
-
   def onCreate(bundle)
     super
     set_title 'ISBN Information Reporter'
@@ -17,9 +16,6 @@ class IsbnReporterActivity
     self.content_view = linear_layout do
       linear_layout orientation: :vertical, margins: [5, 5, 5, 5],
           padding: [5, 5, 5, 5], layout: {width: :match_parent} do
-        text_view text: 'ISBNdb API Key:'
-        @api_key_view = edit_text hint: 'Enter ISBNdb api key',
-            layout: {:width => :match_parent}, gravity: :center
         text_view text: 'ISBN:'
         @isbn_view = edit_text hint: 'Enter ISBN number',
             input_type: InputType::TYPE_CLASS_PHONE,
@@ -40,20 +36,38 @@ class IsbnReporterActivity
 
   def onResume
     super
-    if File.exists?(API_KEY_FILE)
-      api_key = File.read(API_KEY_FILE)
-      run_on_ui_thread do
-        @api_key_view.text = api_key
-        @isbn_view.request_focus
-      end
-    else
-      run_on_ui_thread { @api_key_view.request_focus }
+    if Settings.api_key.nil?
+      start_ruboto_activity :SettingsActivity
     end
+  end
+
+  def onDestroy
+    super
+    if @exit_requested
+      java.lang.System.runFinalizersOnExit(true)
+      java.lang.System.exit(0)
+    end
+  end
+
+  def onCreateOptionsMenu(menu)
+    @save_button = menu.add('Settings').setOnMenuItemClickListener do
+      start_ruboto_activity :SettingsActivity
+      true
+    end
+    @save_button.show_as_action = android.view.MenuItem::SHOW_AS_ACTION_IF_ROOM
+
+    menu.add('Exit').setOnMenuItemClickListener do
+      @exit_requested = true
+      finish
+      true
+    end
+
+    true
   end
 
   def on_info_received(info)
     run_on_ui_thread { toast info.inspect; @result_view.text = info.inspect }
-    StorageProxy.store(info)
+    StorageProxy.store(Settings.path, info)
   end
 
   def on_error(error)
@@ -63,11 +77,9 @@ class IsbnReporterActivity
   private
 
   def save_isbn
-    api_key = @api_key_view.text.to_s.upcase
-    File.write(API_KEY_FILE, api_key)
     isbn = @isbn_view.text.to_s
     toast "Fetching info for #{isbn}"
-    IsbnInformationFetcher.fetch(self, api_key, isbn)
+    IsbnInformationFetcher.fetch(self, Settings.api_key, isbn)
   end
 
 end
