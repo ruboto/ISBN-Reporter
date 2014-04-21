@@ -1,9 +1,9 @@
 require 'json'
 
 class StorageProxy
-  def self.store(path, info)
-    puts "Storing: #{path.inspect}: #{JSON.dump(load(path) + [info])}"
-    File.write(path, JSON.dump(load(path) + [info]))
+  def self.store(path, entry)
+    puts "Storing: #{path.inspect}: #{JSON.dump(load(path) + [entry])}"
+    File.write(path, JSON.dump(load(path) + [entry]))
   end
 
   def self.load(path)

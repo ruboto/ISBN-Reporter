@@ -15,14 +15,14 @@ class IsbnInformationFetcher
         rescue Exception
           puts "Exception opening ISBN info URL: #{$!}"
           puts $!.backtrace.join("\n")
-          activity.on_error $!.to_s
+          activity.on_error isbn, $!.to_s
           next
         end
 
         obj = JSON.parse(content)
 
         if obj.size == 2
-          activity.on_info_received title: obj['data'][0]['title'],
+          activity.on_info_received isbn, title: obj['data'][0]['title'],
               longtitle: obj['data'][0]['longtitle'],
               author: obj['data'][0]['author'],
               publisher: obj['data'][0]['publisher'],
@@ -31,12 +31,12 @@ class IsbnInformationFetcher
               urls: obj['data'][0]['urls'],
               awards: obj['data'][0]['awards']
         else
-          activity.on_error obj['error']
+          activity.on_error isbn, obj['error']
         end
       rescue Exception
         puts "Exception fetching ISBN info: #{$!}"
         puts $!.backtrace.join("\n")
-        activity.on_error $!.to_s
+        activity.on_error isbn, $!.to_s
       end
     end
   end
