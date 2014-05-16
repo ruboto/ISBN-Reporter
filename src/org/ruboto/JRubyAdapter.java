@@ -311,8 +311,8 @@ public class JRubyAdapter {
             Log.i("Added directory to load path: " + scriptsDir);
             Script.addDir(scriptsDir);
             runScriptlet("$:.unshift '" + scriptsDir + "' ; $:.uniq!");
-            Log.d("Changing JRuby current directory to " + scriptsDir);
-            callScriptingContainerMethod(Void.class, "setCurrentDirectory", scriptsDir);
+            // Log.d("Changing JRuby current directory to " + scriptsDir);
+            // callScriptingContainerMethod(Void.class, "setCurrentDirectory", scriptsDir);
             return true;
         } else {
             Log.i("Extra scripts dir not present: " + scriptsDir);

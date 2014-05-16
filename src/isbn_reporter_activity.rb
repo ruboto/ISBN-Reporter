@@ -4,7 +4,7 @@ require 'isbn_information_fetcher'
 require 'settings'
 require 'storage_proxy'
 
-ruboto_import_widgets :Button, :EditText, :LinearLayout, :TextView
+ruboto_import_widgets :Button, :EditText, :LinearLayout, :ScrollView, :TextView
 
 import android.text.InputType
 
@@ -13,21 +13,23 @@ class IsbnReporterActivity
     super
     set_title 'ISBN Information Reporter'
 
-    self.content_view = linear_layout do
-      linear_layout orientation: :vertical, margins: [5, 5, 5, 5],
-          padding: [5, 5, 5, 5], layout: {width: :match_parent} do
-        text_view text: 'Store ISBN', text_size: 36, gravity: :center
-        text_view text: 'ISBN:'
-        @isbn_view = edit_text hint: 'Enter ISBN number',
-            input_type: InputType::TYPE_CLASS_PHONE,
-            layout: {width: :match_parent}, gravity: :center
-        linear_layout do
-          button text: 'Save', layout: {width: :match_parent, weight: 1},
-              on_click_listener: proc { fetch_isbn }
-          button text: 'List', layout: {width: :match_parent, weight: 1},
-              on_click_listener: proc { start_ruboto_activity :ListActivity }
+    self.content_view = scroll_view do
+      linear_layout do
+        linear_layout orientation: :vertical, margins: [5, 5, 5, 5],
+            padding: [5, 5, 5, 5], layout: {width: :match_parent} do
+          text_view text: 'Store ISBN', text_size: 36, gravity: :center
+          text_view text: 'ISBN:'
+          @isbn_view = edit_text hint: 'Enter ISBN number',
+              input_type: InputType::TYPE_CLASS_PHONE,
+              layout: {width: :match_parent}, gravity: :center
+          linear_layout do
+            button text: 'Save', layout: {width: :match_parent, weight: 1},
+                on_click_listener: proc { fetch_isbn }
+            button text: 'List', layout: {width: :match_parent, weight: 1},
+                on_click_listener: proc { start_ruboto_activity :ListActivity }
+          end
+          @result_view = text_view
         end
-        @result_view = text_view
       end
     end
   rescue Exception
